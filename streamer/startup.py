@@ -1,15 +1,22 @@
 from threading import Thread
-from fake_streamer import FakeEventStreamer
 from event_generator import EventGenerator
 
 
-def start_streamer_daemon_threads(base_generator, parameter_controller):
+def start_streamer_daemon_threads(base_generator, parameter_controller, kafka_broker=None):
     event_generator = EventGenerator(base_generator)
     event_generator_thread = Thread(target=event_generator.run)
     event_generator_thread.daemon = True
     event_generator_thread.start()
 
-    streamer = FakeEventStreamer(event_generator)
+    if kafka_broker is None:
+	# Default to zmq
+	from fake_streamer import FakeEventStreamer
+	streamer = FakeEventStreamer(event_generator)
+    else:
+        from fake_streamer_kafka import FakeEventStreamer
+	streamer = FakeEventStreamer(event_generator, kafka_broker)
+
+    
     streamer_thread = Thread(target=streamer.run)
     streamer_thread.daemon = True
     streamer_thread.start()
