@@ -16,13 +16,13 @@ class FakeEventStreamer(object):
         self.producer = KafkaProducer(bootstrap_servers=self.kafka_broker)
 
     def _send_meta_data(self, meta_data):
-        header = json.dumps(self._create_meta_data_header()).encode('utf-8')
-	
-        self.producer.send('live_data_fake_stream', header + meta_data)
+	header = json.dumps(self._create_meta_data_header()).encode('utf-8')
+	data = json.dumps(meta_data).encode('utf-8')
+        self.producer.send('live_data_fake_stream', header + data)
 
     def _send_event_data(self, event_data):
-        header = json.dumps(self._create_event_data_header()).encode('utf-8')
-        self.producer.send('live_data_fake_stream', header + event_data)
+	data = [self._create_event_data_header(), event_data.tolist()]
+        self.producer.send('live_data_fake_stream', json.dumps(data))
 
     def _create_basic_header(self, packet_type):
         header = {

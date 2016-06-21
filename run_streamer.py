@@ -17,7 +17,7 @@ parser.add_argument("-a", "--atoms", type=str,  default='Si 0 0 0 1.0 0.01', hel
 parser.add_argument("-[", "--min-plane-distance", type=float,  default=0.5, help="")
 parser.add_argument("-]", "--max-plane-distance", type=float,  default=4.0, help="")
 parser.add_argument("-l", "--log", type=str,  default='info', help="Set the log level. Allowed values are 'critical', 'error', 'warning', 'info', and 'debug'.")
-parser.add_argument("-k", "--kafka-broker", type=str,  default=None, help="The address and port for the kafka broker, e.g. localhost:9092. If not specified then ZMQ is used")
+parser.add_argument("-k", "--kafka-broker", type=str, default=None, help="The address and port for the kafka broker, e.g. localhost:9092. If not specified then ZMQ is used")
 
 args = parser.parse_args()
 
@@ -26,7 +26,7 @@ setup_global_logger(level=args.log)
 base_generator = create_BraggEventGenerator(args.instrument_definition, (args.unit_cell, args.space_group, args.atoms), args.min_plane_distance, args.max_plane_distance)
 parameter_controller = ParameterControlServer(port=ports.streamer_control)
 
-start_streamer_daemon_threads(base_generator, parameter_controller, args.kafka-broker)
+start_streamer_daemon_threads(base_generator, parameter_controller, args.kafka_broker)
 
 while threading.active_count() > 0:
     time.sleep(0.1)
