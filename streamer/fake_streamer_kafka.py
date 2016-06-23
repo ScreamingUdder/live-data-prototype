@@ -1,6 +1,8 @@
 from kafka import KafkaProducer
 from time import sleep
 import json
+import flatbuffers
+from flat_buf.flat_buffers_utils import FlatBuffersUtils
 
 from logger import log
 
@@ -11,6 +13,7 @@ class FakeEventStreamer(object):
         self.eventGenerator = eventGenerator
 	self.kafka_broker = kafka_broker
 	self.producer = None
+	self.builder = flatbuffers.Builder(0)
 
     def connect(self):
         self.producer = KafkaProducer(bootstrap_servers=self.kafka_broker)
@@ -21,8 +24,8 @@ class FakeEventStreamer(object):
         self.producer.send('live_data_fake_stream', header + data)
 
     def _send_event_data(self, event_data):
-	data = [self._create_event_data_header(), event_data.tolist()]
-        self.producer.send('live_data_fake_stream', json.dumps(data))
+	buf = FlatBuffersUtils.encode_event_data(event_data)
+	self.producer.send('live_data_fake_stream', bytes(buf))
 
     def _create_basic_header(self, packet_type):
         header = {
