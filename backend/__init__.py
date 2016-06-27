@@ -1,4 +1,5 @@
 from backend_event_listener import BackendEventListener
+from backend_event_listener_kafka import BackendEventListenerKafka
 from backend_mantid_reducer import BackendMantidReducer
 from result_publisher import ResultPublisher
 from zmq_queue import ZMQQueueServer

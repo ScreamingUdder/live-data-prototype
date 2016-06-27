@@ -62,6 +62,12 @@ class BackendMantidReducer(BackendWorker):
         return True
 
     def _process_event_data(self, data):
+	# Just in case we get event data before meta data on the first read
+	# Can only happen with Kafka
+	if self._pulse_time is None:
+	    log.debug("Pulse time not set, skipping data")
+	    return True
+
         if self._filter_pulses and self._drop_pulse:
             return True
         event_data = numpy.frombuffer(data, dtype={'names':['detector_id', 'tof'], 'formats':['int32','float32']})

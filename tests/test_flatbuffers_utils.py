@@ -30,7 +30,7 @@ class TestFlatBuffersUtils(unittest.TestCase):
     def test_can_create_event_data_flat_buf_and_retrieve_numpy_array(self):
 	buf = FlatBuffersUtils.encode_event_data(self.event_data)
 
-	ans = FlatBuffersUtils.decode_event_data(buf);
+	ans = FlatBuffersUtils.decode_event_data(buf)
 
 	self.assertEquals(4, len(ans))
 
