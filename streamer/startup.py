@@ -9,12 +9,12 @@ def start_streamer_daemon_threads(base_generator, parameter_controller, kafka_br
     event_generator_thread.start()
     
     if kafka_broker is None:
-	# Default to zmq
-	    from fake_streamer import FakeEventStreamer
-	    streamer = FakeEventStreamer(event_generator)
+        # Default to zmq
+        from fake_streamer import FakeEventStreamer
+        streamer = FakeEventStreamer(event_generator)
     else:
         from fake_streamer_kafka import FakeEventStreamer
-	    streamer = FakeEventStreamer(event_generator, kafka_broker)
+        streamer = FakeEventStreamer(event_generator, kafka_broker)
     
     streamer_thread = Thread(target=streamer.run)
     streamer_thread.daemon = True

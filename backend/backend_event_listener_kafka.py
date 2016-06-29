@@ -41,11 +41,11 @@ class BackendEventListenerKafka(BackendWorker):
     def _connect(self):
         if self._comm.Get_rank() == 0:
             self.consumer = KafkaConsumer(bootstrap_servers=self.kafka_broker)
-	    self.topic = TopicPartition('live_data_fake_stream', 0)
-	    self.consumer.assign([self.topic])
-	    # For now we let it start consuming from the end
-	    self.consumer.seek_to_end(self.topic)
-	    self.offset = self.consumer.position(self.topic)
+        self.topic = TopicPartition('live_data_fake_stream', 0)
+        self.consumer.assign([self.topic])
+        # For now we let it start consuming from the end
+        self.consumer.seek_to_end(self.topic)
+        self.offset = self.consumer.position(self.topic)
 
     def _receive_packet(self):
         if self._comm.Get_rank() == 0:

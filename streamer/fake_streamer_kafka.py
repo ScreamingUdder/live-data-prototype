@@ -7,9 +7,9 @@ from logger import log
 
 
 class FakeEventStreamer(object):
-    def __init__(self, eventGenerator, kafka_broker, version=1):
+    def __init__(self, event_generator, kafka_broker, version=1):
         self.version = version
-        self.eventGenerator = eventGenerator
+        self.event_generator = event_generator
         self.kafka_broker = kafka_broker
         self.producer = None
 
@@ -32,14 +32,14 @@ class FakeEventStreamer(object):
 
     def _create_basic_header(self, packet_type):
         header = {
-                'version':self.version,
-                'type':packet_type,
-                }
+            'version': self.version,
+            'type': packet_type,
+        }
         return header
 
     def _create_event_data_header(self):
         header = self._create_basic_header('event_data')
-        header['record_type'] = self.eventGenerator.get_type_info()
+        header['record_type'] = self.event_generator.get_type_info()
         return header
 
     def _create_meta_data_header(self):
@@ -52,6 +52,6 @@ class FakeEventStreamer(object):
 
         while True:
             # we first send all meta data for a pulse, then all event data
-            self._send_meta_data(self.eventGenerator.get_meta_data())
-            self._send_event_data(self.eventGenerator.get_events())
-	    sleep(1)
+            self._send_meta_data(self.event_generator.get_meta_data())
+            self._send_event_data(self.event_generator.get_events())
+            sleep(1)
