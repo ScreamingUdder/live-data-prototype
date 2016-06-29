@@ -38,11 +38,11 @@ class FlatBuffersUtils(object):
     def decode_event_data(buf):
         raw = FlatbufEventData.GetRootAsFlatbufEventData(buf, 0)
 
-	# Preallocate the space for the array
-	data = np.zeros((raw.Count(),), dtype=[('detector_id', '<i4'), ('tof', '<f4')])
+        # Preallocate the space for the array
+        data = np.zeros((raw.Count(),), dtype=[('detector_id', '<i4'), ('tof', '<f4')])
 
-	for i in range(raw.Count()):
-	    data[i] = (raw.DetId(i), raw.Tof(i))
+        for i in range(raw.Count()):
+            data[i] = (raw.DetId(i), raw.Tof(i))
 
-	return data
+        return data
 	

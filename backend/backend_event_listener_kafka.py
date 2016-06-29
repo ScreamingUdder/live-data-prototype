@@ -15,11 +15,11 @@ from flat_buf.flat_buffers_utils import FlatBuffersUtils
 class BackendEventListenerKafka(BackendWorker):
     def __init__(self, data_queue_out, kafka_broker):
         BackendWorker.__init__(self)
-	self._data_queue_out = data_queue_out
-	self.kafka_broker = kafka_broker
-	self.consumer = None
-	self.topic = None
-	self.offset = -1
+        self._data_queue_out = data_queue_out
+        self.kafka_broker = kafka_broker
+        self.consumer = None
+        self.topic = None
+        self.offset = -1
 
     def _startup(self):
         log.info('Starting EventListener...')
@@ -33,9 +33,9 @@ class BackendEventListenerKafka(BackendWorker):
         # TODO: With this implementation the EventListener will not
         # react to commands unless stream data keeps coming in.
         what, data = self._receive_packet()
-	if data is not None:
+        if data is not None:
             split_data = self._distribute_stream(what, data)
-	    self._data_queue_out.put(split_data)
+            self._data_queue_out.put(split_data)
         return True
 
     def _connect(self):
@@ -49,28 +49,28 @@ class BackendEventListenerKafka(BackendWorker):
 
     def _receive_packet(self):
         if self._comm.Get_rank() == 0:
-	    # Check for new data
-	    # A bit hacky
+            # Check for new data
+            # A bit hacky
             # Get highest offset
-	    self.consumer.seek_to_end(self.topic)
-	    end_pos = self.consumer.position(self.topic)
-	    if end_pos > self.offset:
-		# New data
-	    	# Go back to where we were and read
-            	self.consumer.seek(self.topic, self.offset)
-		buf = self.consumer.next().value
-		self.offset = self.consumer.position(self.topic)
-		try:
-		    # Simple check for JSON metadata:
-		    if buf.startswith('{'):
-		        # It is meta data
-		        return 'meta_data', buf
-	            else:
-		        # Is data then
-		        data = FlatBuffersUtils.decode_event_data(buf)
-	                return 'event_data', data
-		except Exception as err:
-		    print err
+            self.consumer.seek_to_end(self.topic)
+            end_pos = self.consumer.position(self.topic)
+            if end_pos > self.offset:
+                # New data
+                # Go back to where we were and read    
+                self.consumer.seek(self.topic, self.offset)
+                buf = self.consumer.next().value
+                self.offset = self.consumer.position(self.topic)
+                try:
+                    # Simple check for JSON metadata:
+                    if buf.startswith('{'):
+                        # It is meta data
+                        return 'meta_data', buf
+                    else:
+                        # Is data then
+                        data = FlatBuffersUtils.decode_event_data(buf)
+                        return 'event_data', data
+                except Exception as err:
+                    print err
         return None, None
 
     def _distribute_stream(self, what, data):

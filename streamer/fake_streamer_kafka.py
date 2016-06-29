@@ -10,25 +10,25 @@ class FakeEventStreamer(object):
     def __init__(self, eventGenerator, kafka_broker, version=1):
         self.version = version
         self.eventGenerator = eventGenerator
-	self.kafka_broker = kafka_broker
-	self.producer = None
+        self.kafka_broker = kafka_broker
+        self.producer = None
 
     def connect(self):
         self.producer = KafkaProducer(bootstrap_servers=self.kafka_broker)
 
     def _send_meta_data(self, meta_data):
-	header = json.dumps(self._create_meta_data_header()).encode('utf-8')
-	data = json.dumps(meta_data).encode('utf-8')
-	# We only send the data because we cannot combine the header and the data
-	# in one message because it is not valid JSON
+        header = json.dumps(self._create_meta_data_header()).encode('utf-8')
+        data = json.dumps(meta_data).encode('utf-8')
+        # We only send the data because we cannot combine the header and the data
+        # in one message because it is not valid JSON
         self.producer.send('live_data_fake_stream', data)
 
     def _send_event_data(self, event_data):
-	# Only send the data, not the header
-	# The current flatbuffer structure we are using does not have
-	# space for metadata
-	buf = FlatBuffersUtils.encode_event_data(event_data)
-	self.producer.send('live_data_fake_stream', bytes(buf))
+        # Only send the data, not the header
+        # The current flatbuffer structure we are using does not have
+        # space for metadata
+        buf = FlatBuffersUtils.encode_event_data(event_data)
+        self.producer.send('live_data_fake_stream', bytes(buf))
 
     def _create_basic_header(self, packet_type):
         header = {
